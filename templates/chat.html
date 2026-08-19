@@ -27,20 +27,24 @@
     }
 
     .chat-workspace {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top: 58px;
-        width: 100%;
-        max-width: 100%;
-    }
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    padding-top: 58px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+    @media (max-width: 768px) {
 
     .chat-scroll-area {
+        padding: 24px 16px 190px;
         flex: 1;
+        min-height: 0;
         overflow-y: auto;
-        padding: 40px 24px 180px;
-        scroll-behavior: smooth;
-        width: 100%;
+        box-sizing: border-box;
     }
 
     .chat-centered-column {
@@ -375,7 +379,6 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        box-sizing: border-box;
         background: linear-gradient(180deg, var(--chat-fade-0) 0%, var(--chat-fade-95) 30%, var(--chat-fade-100) 100%);
         padding: 24px 24px 20px;
         z-index: 100;
@@ -567,14 +570,15 @@
     .chat-scroll-area::-webkit-scrollbar-thumb:hover { background: var(--ink-sec); }
     .chat-scroll-area { scrollbar-color: var(--muted) transparent; scrollbar-width: thin; }
 
-    @media (max-width: 768px) {
+   @media (max-width: 768px) {
 
     .chat-scroll-area {
-    padding: 24px 16px 190px;
-    height: calc(100dvh - 70px);
-    box-sizing: border-box;
-    overflow-y: auto;
-}
+        padding: 24px 16px 190px;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
 
     .message-row.user .message-bubble {
         max-width: 90%;
@@ -593,67 +597,18 @@
     }
 
     .sticky-input-wrapper {
-        box-sizing: border-box;
-        width: 100%;
-        left: 0;
-        bottom: 0;
-        padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-    }
-
-    .input-container {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    .chat-input-box {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 8px 10px;
-        border-radius: 20px !important;
-    }
-
-    .attachment-btn {
-        padding: 8px;
-        margin-right: 4px;
-        flex-shrink: 0;
-    }
-
-    .chat-textarea {
-        min-width: 0;
-        font-size: 13px;
-        padding: 8px 0;
-        line-height: 1.5;
-    }
-
-    .send-btn {
-        width: 40px;
-        height: 40px;
-        margin-left: 8px;
-        margin-bottom: 1px;
-    }
-
-    .input-footer {
-        font-size: 8px;
-        margin-top: 8px;
-        letter-spacing: .06em;
-    }
-}
-    .sticky-input-wrapper {
         position: fixed;
         left: 0;
         right: 0;
         bottom: 0;
         width: 100%;
         box-sizing: border-box;
-        transform: none;
         padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+        z-index: 1000;
+        transform: none !important;
+        animation: none !important;
     }
-
-    .input-footer {
-        margin-top: 6px;
-        margin-bottom: 0;
-    }
+}
 </style>
 {% endblock %}
 
