@@ -374,18 +374,25 @@
     }
 
     /* Sticky Input */
-    .sticky-input-wrapper {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: linear-gradient(180deg, var(--chat-fade-0) 0%, var(--chat-fade-95) 30%, var(--chat-fade-100) 100%);
-        padding: 24px 24px 20px;
-        z-index: 100;
-        transform: translateY(100%);
-        animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
-        transition: background 0.3s ease;
-    }
+
+.sticky-input-wrapper {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    flex-shrink: 0;
+    background: linear-gradient(
+        180deg,
+        var(--chat-fade-0) 0%,
+        var(--chat-fade-95) 30%,
+        var(--chat-fade-100) 100%
+    );
+    padding: 16px 24px 16px;
+    z-index: 100;
+    transform: none;
+    animation: none;
+    transition: background 0.3s ease;
+}
 
     @supports (backdrop-filter: blur(12px)) {
         .sticky-input-wrapper {
@@ -572,13 +579,15 @@
 
    @media (max-width: 768px) {
 
-    .chat-scroll-area {
-        padding: 24px 16px 190px;
-        flex: 1;
-        min-height: 0;
-        overflow-y: auto;
-        box-sizing: border-box;
-    }
+   .chat-scroll-area {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 40px 24px 40px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
 
     .message-row.user .message-bubble {
         max-width: 90%;
@@ -596,18 +605,19 @@
         font-size: 16px;
     }
 
-    .sticky-input-wrapper {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-        z-index: 1000;
-        transform: none !important;
-        animation: none !important;
-    }
+   .sticky-input-wrapper {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    z-index: 100;
+    transform: none !important;
+    animation: none !important;
+    flex-shrink: 0;
+}
 }
 </style>
 {% endblock %}
