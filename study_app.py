@@ -5,7 +5,7 @@ import os
 import re
 import sqlite3
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any, Optional, Dict, cast, Sequence
 
@@ -905,8 +905,8 @@ def dashboard():
             (username, username),
         )
         streak = cursor.fetchone()[0]
-
-    hour = datetime.now().hour
+    india_time = datetime.now(timezone(timedelta(hours=5, minutes=30)))
+    hour = india_time.hour
     if hour < 12:
         greeting = "Good Morning ☀️"
     elif hour < 18:

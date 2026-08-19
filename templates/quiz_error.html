@@ -1,38 +1,54 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<main class="page-container">
-    <div class="auth-container reveal" style="max-width: 560px;">
-        <div class="card" style="padding: 48px 40px; text-align: center;">
 
-            <div style="font-size: 48px; margin-bottom: 24px;">⚠️</div>
+<main class="page-container quiz-error-page">
 
-            <h2 class="serif-heading" style="font-size: 28px; margin-bottom: 16px;">
+    <div class="quiz-error-container reveal">
+
+        <div class="card quiz-error-card">
+
+            <div class="quiz-error-icon">⚠️</div>
+
+            <h2 class="serif-heading quiz-error-title">
                 Quiz <em>Generation Failed</em>
             </h2>
 
-            <p style="color: var(--ink-sec); font-family: var(--mono); font-size: 12px; line-height: 1.9; margin-bottom: 40px;">
+            <p class="quiz-error-message">
                 {{ message }}
             </p>
 
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <div class="quiz-error-actions">
+
                 <a href="{{ url_for('quiz') }}" class="btn-primary">
                     Try Again
                 </a>
+
                 <a href="{{ url_for('dashboard') }}" class="btn-secondary">
                     Dashboard
                 </a>
+
             </div>
 
-            <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--hairline);">
-                <p style="font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; line-height: 2;">
-                    Make sure Ollama is running:<br>
-                    <strong style="color: var(--ink);">ollama serve</strong><br><br>
-                    And llama3.2 is installed:<br>
-                    <strong style="color: var(--ink);">ollama pull llama3.2</strong>
+            <div class="quiz-error-help">
+
+                <p>
+                    MAKE SURE OLLAMA IS RUNNING:
+                    <br>
+                    <strong>ollama serve</strong>
+                    <br><br>
+
+                    AND LLAMA3.2 IS INSTALLED:
+                    <br>
+                    <strong>ollama pull llama3.2</strong>
                 </p>
+
             </div>
+
         </div>
+
     </div>
+
 </main>
+
 {% endblock %}
