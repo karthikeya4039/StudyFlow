@@ -570,8 +570,11 @@
     @media (max-width: 768px) {
 
     .chat-scroll-area {
-        padding: 24px 16px 180px;
-    }
+    padding: 24px 16px 190px;
+    height: calc(100dvh - 70px);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
 
     .message-row.user .message-bubble {
         max-width: 90%;
@@ -636,6 +639,21 @@
         letter-spacing: .06em;
     }
 }
+    .sticky-input-wrapper {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+        transform: none;
+        padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .input-footer {
+        margin-top: 6px;
+        margin-bottom: 0;
+    }
 </style>
 {% endblock %}
 
