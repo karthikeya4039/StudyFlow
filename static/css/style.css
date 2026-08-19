@@ -1883,11 +1883,12 @@ a {
 
 .quiz-error-page {
     min-height: calc(100vh - 70px);
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 80px;
-    padding-bottom: 80px;
+    padding: 80px 24px;
 }
 
 .quiz-error-container {
@@ -1895,7 +1896,6 @@ a {
     max-width: 650px;
     margin: 0 auto;
 }
-
 .quiz-error-card {
     width: 100%;
     box-sizing: border-box;
