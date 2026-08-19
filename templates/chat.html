@@ -375,6 +375,7 @@
         bottom: 0;
         left: 0;
         width: 100%;
+        box-sizing: border-box;
         background: linear-gradient(180deg, var(--chat-fade-0) 0%, var(--chat-fade-95) 30%, var(--chat-fade-100) 100%);
         padding: 24px 24px 20px;
         z-index: 100;
@@ -567,24 +568,74 @@
     .chat-scroll-area { scrollbar-color: var(--muted) transparent; scrollbar-width: thin; }
 
     @media (max-width: 768px) {
-        .chat-scroll-area { padding: 24px 16px 140px; }
 
-        .message-row.user .message-bubble {
-            max-width: 90%;
-            padding: 16px 20px;
-        }
-
-        .message-row.ai .message-bubble { max-width: 100%; }
-
-        .ai-avatar {
-            margin-right: 16px;
-            width: 32px;
-            height: 32px;
-            font-size: 16px;
-        }
-
-        .sticky-input-wrapper { padding: 24px 16px 16px; }
+    .chat-scroll-area {
+        padding: 24px 16px 180px;
     }
+
+    .message-row.user .message-bubble {
+        max-width: 90%;
+        padding: 16px 20px;
+    }
+
+    .message-row.ai .message-bubble {
+        max-width: 100%;
+    }
+
+    .ai-avatar {
+        margin-right: 16px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .sticky-input-wrapper {
+        box-sizing: border-box;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .input-container {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .chat-input-box {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border-radius: 20px !important;
+    }
+
+    .attachment-btn {
+        padding: 8px;
+        margin-right: 4px;
+        flex-shrink: 0;
+    }
+
+    .chat-textarea {
+        min-width: 0;
+        font-size: 13px;
+        padding: 8px 0;
+        line-height: 1.5;
+    }
+
+    .send-btn {
+        width: 40px;
+        height: 40px;
+        margin-left: 8px;
+        margin-bottom: 1px;
+    }
+
+    .input-footer {
+        font-size: 8px;
+        margin-top: 8px;
+        letter-spacing: .06em;
+    }
+}
 </style>
 {% endblock %}
 
