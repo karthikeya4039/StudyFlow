@@ -9,7 +9,7 @@
 
     <div class="reveal" style="margin-bottom: 60px;">
         <h1 class="serif-heading" style="font-size: clamp(32px, 4vw, 56px);">
-            {{ greeting }}, <em>{{ session.get('username', 'Student') }}</em>.
+            <span id="dashboard-greeting">{{ greeting }}</span>, <em>{{ session.get('username', 'Student') }}</em>.
         </h1>
         <p style="color:var(--ink-sec); font-family:var(--mono); font-size:12px; margin-top:12px;">
             Here is your study overview for today.
@@ -108,3 +108,20 @@
 
 </main>
 {% endblock %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const greetingElement = document.getElementById("dashboard-greeting");
+
+    if (!greetingElement) return;
+
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+        greetingElement.textContent = "Good Morning ☀️";
+    } else if (hour < 18) {
+        greetingElement.textContent = "Good Afternoon 🌤️";
+    } else {
+        greetingElement.textContent = "Good Evening 🌙";
+    }
+});
+</script>
