@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="page-container" style="max-width: 800px;">
+    
+    <div class="card reveal">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; border-bottom: 1px solid var(--hairline); padding-bottom: 20px;">
+            <h3 class="serif-heading" style="font-size: 24px; margin: 0;">Edit <em>Note</em></h3>
+            <a href="/notes" style="font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-sec);">Cancel</a>
+        </div>
+
+        <form method="POST">
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-family:var(--mono); font-size: 10px; text-transform:uppercase; letter-spacing:.1em; color: var(--muted); margin-bottom: 8px;">Title</label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    class="form-input"
+                    value="{{ note[1] }}"
+                    required>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-family:var(--mono); font-size: 10px; text-transform:uppercase; letter-spacing:.1em; color: var(--muted); margin-bottom: 8px;">Content</label>
+                <textarea 
+                    name="content" 
+                    class="form-input"
+                    rows="14"
+                    required>{{ note[2] }}</textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button type="submit" class="btn-primary">
+                    Update Note
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

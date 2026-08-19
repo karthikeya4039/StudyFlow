@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="page-container">
+
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+        
+        <div class="reveal" style="margin-bottom:60px;">
+            <div style="width:200px; height:200px; border:2px solid var(--ink); border-radius:50% !important; margin:0 auto 32px; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                <h1 class="serif-heading" style="font-size: 64px; margin: 0; line-height: 1;">{{ score }}</h1>
+                <span style="font-family:var(--mono); font-size: 14px; color: var(--muted); margin-top: 8px;">/ {{ total }}</span>
+            </div>
+            
+            <h2 class="serif-heading" style="font-size: 36px; margin-bottom: 12px;">Quiz <em>Completed</em></h2>
+            <p style="color: var(--ink-sec);">Great job testing your knowledge.</p>
+        </div>
+
+        <div class="reveal-stagger" style="text-align:left;">
+            {% for item in results %}
+            <div class="card reveal" style="margin-bottom:24px; padding:32px;">
+                <h3 class="serif-heading" style="font-size:20px; margin-bottom:24px;">{{ loop.index }}. {{ item.question }}</h3>
+                
+                <div class="ruled-rows">
+                    <div class="ruled-row" style="grid-template-columns: 120px 1fr;">
+                        <span class="ruled-row__label">Your Answer</span>
+                        <span class="ruled-row__desc">
+                            {% if item.user_answer %}
+                                {% if item.user_answer|length > 3 and item.user_answer[1:3] == ") " %}
+                                    <strong style="font-family:var(--mono); color:var(--warm-accent); margin-right:8px;">{{ item.user_answer[:2] }}</strong>{{ item.user_answer[3:] }}
+                                {% else %}
+                                    {{ item.user_answer }}
+                                {% endif %}
+                            {% else %}
+                                <em>Not Answered</em>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="ruled-row" style="grid-template-columns: 120px 1fr;">
+                        <span class="ruled-row__label">Correct Answer</span>
+                        <span class="ruled-row__desc" style="color:var(--ink); font-weight:bold;">
+                            {% if item.correct_answer|length > 3 and item.correct_answer[1:3] == ") " %}
+                                <strong style="font-family:var(--mono); color:var(--warm-accent); margin-right:8px;">{{ item.correct_answer[:2] }}</strong>{{ item.correct_answer[3:] }}
+                            {% else %}
+                                {{ item.correct_answer }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="ruled-row" style="grid-template-columns: 120px 1fr; border-bottom:none;">
+                        <span class="ruled-row__label">Result</span>
+                        <span class="ruled-row__desc">
+                            {% if item.is_correct %}
+                                <span style="color:#2e7d32; font-weight:bold;">Correct</span>
+                            {% else %}
+                                <span style="color:#d32f2f; font-weight:bold;">Incorrect</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="reveal" style="display: flex; gap: 16px; justify-content: center; margin-top: 60px;">
+            <a href="/quiz" class="btn-primary">
+                Retake Quiz
+            </a>
+            <a href="/dashboard" class="btn-secondary">
+                Dashboard
+            </a>
+        </div>
+        
+    </div>
+
+</main>
+{% endblock %}

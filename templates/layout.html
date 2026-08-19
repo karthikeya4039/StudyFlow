@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StudyFlow helps you keep notes, ask questions, and practice with quizzes in one calm workspace.">
+    <meta name="theme-color" content="#EFE9DD">
+    <title>StudyFlow</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500;1,6..72,600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        // Init theme early to prevent FOUC
+        (function() {
+            var savedTheme = localStorage.getItem('aiStudyTheme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+    {% block head_extra %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- No overlays for warm stationery design -->
+
+    <!-- Floating Pill Nav -->
+    <div class="pill-nav-wrapper">
+        <nav class="pill-nav">
+            <div class="nav-left">
+                <svg class="nav-logo-mark" viewBox="0 0 64 64" aria-hidden="true">
+                    <rect x="10" y="10" width="44" height="44" rx="10" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                    <path d="M22 24h20M22 32h20M22 40h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+                <span>StudyFlow</span>
+            </div>
+            <div class="nav-center">
+                <a href="/" class="nav-link" data-nav>Home</a>
+                <a href="{{ url_for('chat', reset='true') }}" class="nav-link" data-nav>AI Chat</a>
+                <a href="{{ url_for('chat_history') }}" class="nav-link" data-nav>Chat History</a>
+                <a href="{{ url_for('notes') }}" class="nav-link" data-nav>Notes</a>
+                <a href="{{ url_for('quiz') }}" class="nav-link" data-nav>Quiz</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link" data-nav>Dashboard</a>
+            </div>
+            <div class="nav-right">
+                <button id="mobile-menu-btn" class="nav-link mobile-only-btn" style="background:transparent; border:none; cursor:pointer; padding: 4px; display:none; align-items:center;" aria-label="Toggle Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <button id="theme-toggle" class="nav-link" style="background:transparent; border:none; cursor:pointer; padding: 4px; display:flex; align-items:center;" aria-label="Toggle Dark Mode">
+                    <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                {% if session.get('username') %}
+                <a href="/logout" class="nav-link" id="logout-btn" style="color: #ef4444;">Log out</a>
+                <a href="{{ url_for('chat', reset='true') }}" class="nav-btn" data-nav>
+                    Open App
+                </a>
+                {% else %}
+                <a href="/login" class="nav-link" data-nav>Log in</a>
+                <a href="/register" class="nav-btn" data-nav>
+                    Sign Up
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Global Scripts -->
+    <script>
+        (function () {
+            const path = window.location.pathname;
+            document.querySelectorAll('.nav-link[data-nav]').forEach(function (link) {
+                const href = link.getAttribute('href');
+                if (href === path || (href !== '/' && path.startsWith(href))) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Theme Toggle Logic
+            const toggleBtn = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+
+            function updateIcons() {
+                if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                } else {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                }
+            }
+
+            updateIcons();
+
+            toggleBtn.addEventListener('click', () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('aiStudyTheme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('aiStudyTheme', 'dark');
+                }
+                updateIcons();
+            });
+
+            // Mobile Menu Toggle Logic
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const navCenter = document.querySelector('.nav-center');
+            
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    navCenter.classList.toggle('mobile-open');
+                });
+            }
+        })();
+    </script>
+
+</body>
+
+</html>

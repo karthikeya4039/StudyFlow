@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<main class="page-container" style="max-width:900px;">
+
+    <div class="chat-workspace">
+
+        <div class="chat-header reveal">
+            <h1 class="serif-heading">Chat <em>History</em></h1>
+            <p>Your past conversations with the AI Tutor</p>
+        </div>
+
+        {% if chats %}
+        <div class="chat-history-timeline reveal">
+            {% for chat in chats %}
+            <div style="padding: 40px 0; border-bottom: 1px solid var(--hairline);">
+
+                <div style="margin-bottom: 16px;">
+                    <span style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted);">
+                        {{ chat[2] }}
+                    </span>
+                </div>
+
+                <div style="display:grid; grid-template-columns:40px 1fr; gap:24px; margin-bottom:24px;">
+                    <div style="font-size:24px; opacity:.8;">👤</div>
+                    <div style="font-family:var(--mono); font-size:12px; line-height:1.9; color:var(--ink-sec);">
+                        {{ chat[0] | e }}
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:40px 1fr; gap:24px;">
+                    <div style="font-size:24px; opacity:.8;">🤖</div>
+                    <div class="chat-history-ai-content" style="font-family:var(--serif); font-size:15px; line-height:1.9; color:var(--ink);"
+                         data-raw="{{ chat[1] | e }}">
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+
+        <div class="reveal" style="text-align:center; padding:100px 0;">
+            <svg viewBox="0 0 100 100" style="width:80px; height:80px; margin-bottom:24px; opacity:0.6;">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 4" />
+                <path d="M40 40 L60 60 M60 40 L40 60" stroke="var(--ink)" stroke-width="1.5" />
+            </svg>
+            <h3 class="serif-heading" style="font-size:24px; margin-bottom:12px;">No conversations <em>yet</em></h3>
+            <p style="color:var(--ink-sec); margin-bottom:32px;">Start chatting with the AI Tutor to see your history here.</p>
+            <a href="{{ url_for('chat', reset='true') }}" class="btn-primary">Start a Chat</a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</main>
+
+<script>
+// Render stored markdown in chat history safely
+document.querySelectorAll('.chat-history-ai-content').forEach(function (el) {
+    const raw = el.getAttribute('data-raw') || '';
+    try {
+        el.innerHTML = DOMPurify.sanitize(marked.parse(raw));
+    } catch (e) {
+        el.textContent = raw;
+    }
+    // Apply highlight.js to code blocks
+    el.querySelectorAll('pre code').forEach(function (block) {
+        try { hljs.highlightElement(block); } catch (e) {}
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+.env
+.venv/
+venv/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+# Temporary/debug scripts
+*_tmp.py
+# Local/generated response files
+files/

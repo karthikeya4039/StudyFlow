@@ -1,0 +1,166 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="page-container">
+    <div class="card reveal" style="max-width:900px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:28px;">
+            <h1 class="serif-heading" style="font-size: clamp(28px, 4vw, 44px); margin-bottom: 8px;">Quiz <em>Setup</em></h1>
+            <p style="color:var(--ink-sec);">Configure your AI-generated exam.</p>
+        </div>
+
+        <form action="/generate_quiz" method="POST" id="quiz-form">
+
+            <div style="margin-bottom:20px; display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
+                <div style="flex:1; min-width:240px;">
+                    <h3 style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:12px;">Topic</h3>
+                    <div class="quiz-pill-group" id="topic-pills">
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="Python" checked><span>Python</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="C++"><span>C++</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="Java"><span>Java</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="AI"><span>AI</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="Machine Learning"><span>Machine Learning</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="DBMS"><span>DBMS</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="Operating System"><span>Operating System</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="Computer Networks"><span>Computer Networks</span></label>
+                        <label class="quiz-pill"><input type="radio" name="topic_choice" value="__other__"><span>Other</span></label>
+                    </div>
+
+                    <div id="custom-topic-row" style="margin-top:10px; display:none; gap:8px; align-items:center;">
+                        <input type="text" id="custom-topic" placeholder="Enter custom topic (e.g. 'Quantum Computing')" style="flex:1; padding:8px; border:1px solid var(--hairline); background:var(--ground); border-radius:6px;">
+                    </div>
+
+                </div>
+
+                <div style="width:240px;">
+                    <h3 style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:12px;">Questions</h3>
+                    <div class="quiz-pill-group" id="count-pills" style="margin-bottom:8px;">
+                        <label class="quiz-pill"><input type="radio" name="count_choice" value="5" checked><span>5</span></label>
+                        <label class="quiz-pill"><input type="radio" name="count_choice" value="10"><span>10</span></label>
+                        <label class="quiz-pill"><input type="radio" name="count_choice" value="15"><span>15</span></label>
+                        <label class="quiz-pill"><input type="radio" name="count_choice" value="20"><span>20</span></label>
+                    </div>
+
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="number" name="count" id="count-number" min="1" max="20" value="5" style="width:84px; padding:8px; border:1px solid var(--hairline); background:var(--ground); border-radius:6px;">
+                        <div style="font-size:13px; color:var(--ink-sec);">Max 20</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="margin-bottom:18px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;">
+                <div style="flex:1; min-width:240px;">
+                    <h3 style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:8px;">Difficulty</h3>
+                    <div class="quiz-pill-group">
+                        <label class="quiz-pill"><input type="radio" name="difficulty" value="Easy" checked><span>Easy</span></label>
+                        <label class="quiz-pill"><input type="radio" name="difficulty" value="Medium"><span>Medium</span></label>
+                        <label class="quiz-pill"><input type="radio" name="difficulty" value="Hard"><span>Hard</span></label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hidden field that will be sent as 'topic' to the server. JS keeps this updated from topic_choice/custom-topic -->
+            <input type="hidden" name="topic" id="topic-hidden" value="Python">
+
+            <div style="text-align:center; margin-top:6px;">
+                <button type="submit" id="generate-btn" class="btn-primary" style="width:100%; max-width:320px;">
+                    Generate Quiz
+                </button>
+            </div>
+        </form>
+
+        <div class="ai-loading-overlay" id="quiz-skeleton">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--ink-sec);margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <div class="spinner"></div> AI is crafting your quiz...
+            </div>
+        </div>
+
+        <script>
+            // Keep topic and count fields in sync with visible controls
+            const topicHidden = document.getElementById('topic-hidden');
+            const topicRadios = document.querySelectorAll('input[name="topic_choice"]');
+            const customTopicRow = document.getElementById('custom-topic-row');
+            const customTopicInput = document.getElementById('custom-topic');
+            const countRadios = document.querySelectorAll('input[name="count_choice"]');
+            const countNumber = document.getElementById('count-number');
+            function updateTopicHidden() {
+                const selected = Array.from(topicRadios).find(r => r.checked);
+                if (selected && selected.value === '__other__') {
+                    customTopicRow.style.display = 'flex';
+                    const val = customTopicInput.value.trim();
+                    topicHidden.value = val || '';
+                } else if (selected) {
+                    customTopicRow.style.display = 'none';
+                    topicHidden.value = selected.value;
+                }
+            }
+
+            topicRadios.forEach(r => r.addEventListener('change', updateTopicHidden));
+            customTopicInput.addEventListener('input', updateTopicHidden);
+
+            function validateCountSelection() {
+                const selected = Array.from(countRadios).find(r => r.checked);
+                if (selected) {
+                    // ensure the numeric field always matches the selected pill
+                    countNumber.value = selected.value;
+                    if (selected.value === '5' && countNumber.value !== '5') {
+                        countNumber.value = '5';
+                    }
+                }
+            }
+
+            function updateCountHidden(from) {
+                if (from === 'radio') {
+                    const selected = Array.from(countRadios).find(r => r.checked);
+                    if (selected) {
+                        countNumber.value = selected.value;
+                        if (selected.value === '5' && countNumber.value !== '5') {
+                            countNumber.value = '5';
+                        }
+                    }
+                } else {
+                    let v = parseInt(countNumber.value || '5', 10) || 5;
+                    v = Math.max(1, Math.min(20, v));
+                    countNumber.value = v;
+                    countRadios.forEach(r => r.checked = (parseInt(r.value,10) === v));
+                }
+            }
+
+            countRadios.forEach(r => r.addEventListener('change', () => {
+                updateCountHidden('radio');
+                validateCountSelection();
+            }));
+            countNumber.addEventListener('input', () => updateCountHidden('number'));
+
+            // initial sync
+            updateTopicHidden();
+            updateCountHidden('radio');
+
+            // Validate custom topic before submit
+            document.getElementById('quiz-form').addEventListener('submit', function (e) {
+                updateTopicHidden();
+                updateCountHidden();
+                if (topicHidden.value.trim() === '') {
+                    const selected = Array.from(topicRadios).find(r => r.checked);
+                    if (selected && selected.value === '__other__') {
+                        e.preventDefault();
+                        alert('Please enter a topic for the "Other" option.');
+                        customTopicInput.focus();
+                        return false;
+                    }
+                }
+
+                var btn = document.getElementById('generate-btn');
+                var skeleton = document.getElementById('quiz-skeleton');
+                btn.innerHTML = '<div class="spinner"></div> Generating...';
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.7';
+                skeleton.classList.add('visible');
+            });
+        </script>
+
+    </div>
+</main>
+{% endblock %}

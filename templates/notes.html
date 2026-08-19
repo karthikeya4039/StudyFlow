@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="page-container">
+
+    <div class="card reveal" style="margin-bottom: 60px;">
+        <h3 class="serif-heading" style="font-size: 24px; margin-bottom: 24px;">Create <em>New Note</em></h3>
+
+        <form action="/notes" method="POST">
+            <div style="margin-bottom: 16px;">
+                <input type="text" name="title" class="form-input" placeholder="Note Title" required>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <textarea name="content" class="form-input" rows="4" placeholder="Write your study notes here..."
+                    required></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button type="submit" class="btn-primary">
+                    Save Note
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;" class="reveal">
+        <h2 class="serif-heading" style="font-size:32px;">Your <em>Notes</em></h2>
+    </div>
+
+    {% if notes %}
+    <div class="notes-grid reveal-stagger">
+        {% for note in notes %}
+        <div class="note-card reveal">
+            <h3>{{ note[1] }}</h3>
+            
+            <div class="note-preview">
+                {{ note[2] }}
+            </div>
+
+            <div class="note-actions">
+                <a href="{{ url_for('edit_note', note_id=note[0]) }}" class="btn-secondary btn-edit" style="flex:1; padding:10px; font-size:10px;">
+                    Edit
+                </a>
+
+                <a href="{{ url_for('download_note', note_id=note[0]) }}" class="btn-secondary btn-export" style="padding:10px; font-size:10px;">
+                    Export
+                </a>
+
+                <a href="{{ url_for('delete_note', note_id=note[0]) }}" class="btn-secondary btn-delete" style="flex:1; padding:10px; font-size:10px; border-color:transparent; color:var(--error);"
+                    onclick="return confirm('Delete this note forever?');">
+                    Delete
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    
+    <div class="reveal" style="text-align:center; padding:100px 0;">
+        <svg viewBox="0 0 100 100" style="width:80px; height:80px; margin-bottom:24px; opacity:0.6;">
+            <rect x="20" y="10" width="60" height="80" fill="none" stroke="var(--ink)" stroke-width="1.5" />
+            <line x1="35" y1="30" x2="65" y2="30" stroke="var(--ink)" stroke-width="1.5" />
+            <line x1="35" y1="50" x2="65" y2="50" stroke="var(--ink)" stroke-width="1.5" />
+            <line x1="35" y1="70" x2="50" y2="70" stroke="var(--ink)" stroke-width="1.5" />
+        </svg>
+        <h3 class="serif-heading" style="font-size:24px; margin-bottom:12px;">No notes <em>yet</em></h3>
+        <p style="color:var(--ink-sec); margin-bottom:32px;">Create your first note above.</p>
+    </div>
+    
+    {% endif %}
+
+</main>
+{% endblock %}

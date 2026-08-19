@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing out — StudyFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        // Clear all client-side storage on logout
+        try { localStorage.removeItem('aiStudyChatHistory'); } catch(e) {}
+        try { sessionStorage.removeItem('pendingQuestion'); } catch(e) {}
+        try { localStorage.removeItem('aiStudyTheme'); } catch(e) {}
+    </script>
+    <meta http-equiv="refresh" content="0; url={{ url_for('login') }}">
+</head>
+<body>
+    <div style="display:flex; align-items:center; justify-content:center; height:100vh; font-family: var(--mono); color: var(--ink-sec); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;">
+        Signing out...
+    </div>
+    <script>
+        // Immediate redirect after storage is cleared
+        window.location.replace("{{ url_for('login') }}");
+    </script>
+</body>
+</html>

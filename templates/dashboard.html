@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block head_extra %}
+<script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<main class="page-container">
+
+    <div class="reveal" style="margin-bottom: 60px;">
+        <h1 class="serif-heading" style="font-size: clamp(32px, 4vw, 56px);">
+            {{ greeting }}, <em>{{ session.get('username', 'Student') }}</em>.
+        </h1>
+        <p style="color:var(--ink-sec); font-family:var(--mono); font-size:12px; margin-top:12px;">
+            Here is your study overview for today.
+        </p>
+    </div>
+
+    <div class="metrics-grid reveal-stagger">
+        <div class="metric-card">
+            <h3>Total Notes</h3>
+            <div class="value">{{ total_notes }}</div>
+        </div>
+
+        <div class="metric-card">
+            <h3>Quizzes Taken</h3>
+            <div class="value">{{ total_quiz }}</div>
+        </div>
+
+        <div class="metric-card">
+            <h3 style="color:var(--blue);">AI Chats</h3>
+            <div class="value" style="color:var(--blue);">{{ ai_count }}</div>
+        </div>
+
+        <div class="metric-card">
+            <h3>Study Streak</h3>
+            <div class="value">{{ streak }}</div>
+        </div>
+    </div>
+
+    <div class="two-col" style="margin-top:80px; gap:60px;">
+        <div class="reveal">
+            <h2 class="serif-heading" style="font-size: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--hairline); padding-bottom: 16px;">
+                Recent <em>Activity</em>
+            </h2>
+
+            <ul class="timeline-list">
+                <li class="timeline-item">
+                    <div class="timeline-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                    </div>
+                    <div>
+                        <strong>Notes</strong>
+                        <p style="font-size:11px;">You have {{ total_notes }} study note{{ 's' if total_notes != 1 else '' }}</p>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                    </div>
+                    <div>
+                        <strong>AI Tutor</strong>
+                        <p style="font-size:11px;">{{ ai_count }} conversation{{ 's' if ai_count != 1 else '' }} recorded</p>
+                    </div>
+                </li>
+                <li class="timeline-item">
+                    <div class="timeline-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="17" cy="17" r="3" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>
+                    </div>
+                    <div>
+                        <strong>Quizzes</strong>
+                        <p style="font-size:11px;">{{ total_quiz }} quiz{{ 'zes' if total_quiz != 1 else '' }} completed</p>
+                    </div>
+                </li>
+                <li class="timeline-item" style="border-bottom: none;">
+                    <div class="timeline-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M12 4l2 4 4 .6-3 3 .7 4-3.7-2-3.7 2 .7-4-3-3 4-.6 2-4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+                    </div>
+                    <div>
+                        <strong>Study Streak</strong>
+                        <p style="font-size:11px;">Active on {{ streak }} distinct day{{ 's' if streak != 1 else '' }}</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="reveal">
+            <h2 class="serif-heading" style="font-size: 28px; margin-bottom: 32px; border-bottom: 1px solid var(--hairline); padding-bottom: 16px;">
+                Quick <em>Actions</em>
+            </h2>
+
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <a href="{{ url_for('notes') }}" class="btn-secondary" style="justify-content:flex-start; padding:20px;">
+                    <span class="action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></span> Create New Note
+                </a>
+                <a href="{{ url_for('chat', reset='true') }}" class="btn-secondary" style="justify-content:flex-start; padding:20px;">
+                    <span class="action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></span> Ask AI Tutor
+                </a>
+                <a href="{{ url_for('quiz') }}" class="btn-secondary" style="justify-content:flex-start; padding:20px;">
+                    <span class="action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="17" cy="17" r="3" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg></span> Generate Quiz
+                </a>
+                <a href="{{ url_for('chat_history') }}" class="btn-secondary" style="justify-content:flex-start; padding:20px;">
+                    <span class="action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 5h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-3 3V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.5"></path></svg></span> View Chat History
+                </a>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}

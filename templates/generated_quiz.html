@@ -1,0 +1,381 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="page-container">
+
+  <div class="card reveal" style="max-width:1100px; margin:16px auto; display:grid; grid-template-columns: 1fr 320px; gap:20px;">
+
+    <!-- Left: main exam area -->
+    <section style="padding:18px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="font-family:var(--mono); font-size:12px; color:var(--muted);">Topic</div>
+          <div class="pill" style="background:var(--ground); padding:6px 10px; border-radius:8px; font-weight:600;">{{ session.get('quiz_topic', 'AI Quiz') }}</div>
+        </div>
+        <div style="display:flex; gap:14px; align-items:center;">
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:var(--muted);">Total Questions</div>
+            <div style="font-weight:700;">{{ quiz|length }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="question-container" style="background:var(--ground); border-radius:8px; padding:18px; min-height:240px;">
+        <!-- Questions rendered server-side but JS will show one at a time -->
+        {% for q in quiz %}
+        <article class="question-item" data-index="{{ loop.index0 }}" style="display:{{ 'block' if loop.index0==0 else 'none' }};">
+          {# expose the question number to inner loops since Jinja's LoopContext may not provide parent in some versions #}
+          {% set qnum = loop.index %}
+          <header style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-size:13px; font-weight:700;">Question {{ loop.index }} of {{ quiz|length }}</div>
+            <div id="status-{{ loop.index0 }}" style="font-size:12px; color:var(--muted);">Not visited</div>
+          </header>
+          <div style="margin-bottom:16px;">
+            <h3 class="serif-heading" style="font-size:18px;">{{ q.question }}</h3>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            {% for opt in q.options %}
+            <label class="quiz-pill option-row" data-option-index="{{ loop.index0 }}" style="cursor:pointer; display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px;">
+              {# use the saved outer loop index for the input name so browser radios behave as a group #}
+              <input type="radio" name="q{{ qnum }}" data-input-name="q{{ qnum }}" value="{{ opt }}" style="display:none;">
+              <div class="option-tag" style="width:28px; font-weight:700; color:var(--muted);">{{ 'ABCD'[loop.index0] }}</div>
+              <div class="option-text" style="flex:1;">{{ opt }}</div>
+            </label>
+            {% endfor %}
+          </div>
+
+          <div class="quiz-control-row" style="justify-content:space-between; margin-top:18px;">
+            <button type="button" id="mark-btn-{{ loop.index0 }}" class="btn-outline" style="padding:8px 12px;">Mark for Review & Next</button>
+            <div style="display:flex; gap:8px; flex-wrap: wrap;">
+              <button type="button" class="btn-link clear-btn" data-index="{{ loop.index0 }}">Clear Response</button>
+              <button type="button" class="btn-primary save-next-btn" data-index="{{ loop.index0 }}">Save & Next</button>
+            </div>
+          </div>
+
+        </article>
+        {% endfor %}
+
+      </div>
+
+    </section>
+
+    <!-- Right: palette + submit -->
+    <aside style="padding:18px; border-left:1px solid var(--hairline);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:700;">Question Palette</div>
+        <div style="font-size:12px; color:var(--muted);">Quick Nav</div>
+      </div>
+
+      <div id="palette" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; margin-bottom:12px;">
+        {% for q in quiz %}
+        <button type="button" class="palette-btn" data-index="{{ loop.index0 }}" style="padding:10px; border-radius:6px; background:var(--ground); border:1px solid var(--hairline);">{{ loop.index }}</button>
+        {% endfor %}
+      </div>
+
+      <div style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;"><span style="width:14px;height:14px;border-radius:3px;background:var(--ground);border:1px solid var(--hairline);"></span> Not visited</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;"><span style="width:14px;height:14px;border-radius:3px;background:transparent;border:2px dashed var(--ink);"></span> Not answered</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;"><span style="width:14px;height:14px;border-radius:3px;background:var(--blue);"></span> Answered</div>
+        <div style="display:flex; gap:8px; align-items:center;"><span style="width:14px;height:14px;border-radius:3px;border:2px solid var(--ink); background:linear-gradient(90deg, transparent 40%, var(--ground) 40%);"></span> Marked for review</div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <form id="submit-form" action="{{ url_for('submit_quiz') }}" method="post">
+          <!-- hidden fields q1..qN will be created by JS before submit -->
+          <div class="quiz-control-row" style="margin-bottom:10px;">
+            <button type="button" id="preview-status" class="btn-link">Status</button>
+            <button type="button" id="collapse-palette" class="btn-link">Collapse</button>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-primary" style="width:100%;">Submit Test</button>
+        </form>
+      </div>
+
+      {% include 'quiz_submit_modal.html' %}
+
+    </aside>
+
+  </div>
+
+  <script>
+    // Build client-side state from server-rendered DOM
+    const total = {{ quiz|length }};
+    const questionItems = Array.from(document.querySelectorAll('.question-item'));
+    const paletteBtns = Array.from(document.querySelectorAll('.palette-btn'));
+    const submitForm = document.getElementById('submit-form');
+
+    // state: array of {answer: string|null, marked: bool, visited: bool}
+    const storageKey = `aiStudy_quiz_progress_v1_{{ session.get('quiz_topic','quiz') | replace(' ','_') }}_{{ session.get('quiz_id', 'new') }}_${total}`;
+    let state = [];
+
+    function initState() {
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        try { state = JSON.parse(saved); } catch(e){ state = null; }
+      }
+      if (!Array.isArray(state) || state.length !== total) {
+        state = Array.from({length: total}).map(()=>({answer:null, marked:false, visited:false}));
+      }
+    }
+
+    initState();
+
+    function persist() { sessionStorage.setItem(storageKey, JSON.stringify(state)); }
+
+    // show question index
+    let current = 0;
+    function showQuestion(index) {
+      if (index < 0 || index >= total) return;
+      // mark visited
+      state[index].visited = true;
+      persist();
+      questionItems.forEach((el,i)=> el.style.display = i===index ? 'block' : 'none');
+      current = index;
+      syncSelectionState();
+      updatePaletteStyles();
+    }
+
+    // palette nav
+    paletteBtns.forEach(btn=> btn.addEventListener('click', ()=> showQuestion(parseInt(btn.dataset.index,10))));
+
+    // option selection via clicking the label
+    function syncSelectionState() {
+      questionItems.forEach((questionEl, qIndex) => {
+        const answer = state[qIndex].answer;
+        questionEl.querySelectorAll('.option-row').forEach(row => {
+          const input = row.querySelector('input[type=radio]');
+          if (!input) return;
+          const isSelected = answer && input.value === answer;
+          input.checked = !!isSelected;
+          row.classList.toggle('selected', !!isSelected);
+        });
+      });
+    }
+
+    document.querySelectorAll('.option-row').forEach(row=>{
+      row.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const input = row.querySelector('input[type=radio]');
+        if (!input) return;
+        const questionEl = row.closest('.question-item');
+        if (!questionEl) return;
+        const qIndex = parseInt(questionEl.dataset.index, 10);
+
+        questionEl.querySelectorAll('.option-row').forEach(siblingRow => siblingRow.classList.remove('selected'));
+        questionEl.querySelectorAll('input[type=radio]').forEach(radio => radio.checked = false);
+
+        input.checked = true;
+        row.classList.add('selected');
+        state[qIndex].answer = input.value || row.innerText.trim();
+        state[qIndex].visited = true;
+        persist();
+        updatePaletteStyles();
+      });
+    });
+
+    // buttons: Save & Next
+    document.querySelectorAll('.save-next-btn').forEach(btn=> btn.addEventListener('click', (e)=>{
+      const idx = parseInt(btn.dataset.index,10);
+      // if no answer, keep it as is
+      showQuestion(Math.min(total-1, idx+1));
+    }));
+
+    // Clear Response
+    document.querySelectorAll('.clear-btn').forEach(btn=> btn.addEventListener('click', (e)=>{
+      const idx = parseInt(btn.dataset.index,10);
+      state[idx].answer = null;
+      state[idx].visited = true;
+      persist();
+      syncSelectionState();
+      updatePaletteStyles();
+    }));
+
+    // Mark for Review & Next
+    for (let i=0;i<total;i++) {
+      const mb = document.getElementById(`mark-btn-${i}`);
+      if (!mb) continue;
+      mb.addEventListener('click', ()=>{
+        state[i].marked = !state[i].marked;
+        state[i].visited = true;
+        persist();
+        updatePaletteStyles();
+        showQuestion(Math.min(total-1, i+1));
+      });
+    }
+
+    function updatePaletteStyles() {
+      paletteBtns.forEach((btn,i)=>{
+        btn.classList.remove('answered','marked','not-answered','not-visited');
+        btn.style.borderColor = '';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.border = '';
+
+        const st = state[i];
+        if (!st.visited && !st.answer) {
+          btn.classList.add('not-visited');
+          btn.style.borderColor='var(--hairline)';
+          btn.style.background='var(--ground)';
+        } else if (st.marked && st.answer) {
+          btn.classList.add('marked');
+          btn.style.background='linear-gradient(90deg,var(--blue),var(--ground))';
+          btn.style.color = 'white';
+        } else if (st.marked && !st.answer) {
+          btn.classList.add('marked');
+          btn.style.border='2px solid var(--ink)';
+          btn.style.background='transparent';
+        } else if (st.answer) {
+          btn.classList.add('answered');
+          btn.style.background='var(--blue)';
+          btn.style.color='white';
+        } else {
+          btn.classList.add('not-answered');
+          btn.style.border='2px dashed var(--ink)';
+          btn.style.background='transparent';
+        }
+      });
+
+      // update status text on current
+      questionItems.forEach((el,i)=>{
+        const st = state[i];
+        const statusEl = document.getElementById(`status-${i}`);
+        if (statusEl) {
+          if (st.marked && st.answer) statusEl.textContent = 'Answered & Marked';
+          else if (st.marked) statusEl.textContent = 'Marked for review';
+          else if (st.answer) statusEl.textContent = 'Answered';
+          else if (st.visited) statusEl.textContent = 'Not answered';
+          else statusEl.textContent = 'Not visited';
+        }
+      });
+    }
+
+    syncSelectionState();
+    updatePaletteStyles();
+    showQuestion(0);
+
+    // Make the Submit Test button smart: if all questions are answered, submit immediately;
+    // otherwise open the confirmation modal as before.
+    const submitBtnEl = document.getElementById('submit-btn');
+    if (submitBtnEl) {
+      submitBtnEl.addEventListener('click', (e) => {
+        const answered = state.filter(s => s.answer).length;
+        if (answered === total) {
+          // directly submit without showing modal
+          e.preventDefault();
+          buildQuizSubmitFields();
+          sessionStorage.removeItem(storageKey);
+          submitForm.dataset.submitting = 'true';
+          if (typeof submitForm.requestSubmit === 'function') {
+            submitForm.requestSubmit();
+          } else {
+            submitForm.submit();
+          }
+        }
+        // if not all answered, allow the existing submit handler to open the modal
+      });
+    }
+
+    function buildQuizSubmitFields() {
+      submitForm.querySelectorAll('input[type=hidden].quiz-submit-field').forEach(n=>n.remove());
+      for (let i=0;i<total;i++) {
+        const name = `q${i+1}`;
+        const val = state[i].answer || '';
+        const inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = name;
+        inp.value = val;
+        inp.className = 'quiz-submit-field';
+        submitForm.appendChild(inp);
+      }
+    }
+
+    submitForm.addEventListener('submit', (event) => {
+      if (submitForm.dataset.submitting === 'true') {
+        submitForm.dataset.submitting = 'false';
+        return;
+      }
+      event.preventDefault();
+      openSubmitModal();
+    });
+
+    const quizSubmitModal = document.getElementById('quiz-submit-modal');
+    const quizSubmitSummary = document.querySelector('.quiz-submit-summary');
+    const quizConfirmBtn = document.getElementById('quiz-confirm-btn');
+    const quizCancelBtn = document.getElementById('quiz-cancel-btn');
+
+    function openSubmitModal() {
+      const answered = state.filter(s=>s.answer).length;
+      const marked = state.filter(s=>s.marked).length;
+      const visited = state.filter(s=>s.visited).length;
+      quizSubmitSummary.textContent = `You have answered ${answered}/${total} questions. ${marked} marked for review. ${total - visited} not visited.`;
+      quizSubmitModal.classList.add('visible');
+      quizConfirmBtn.disabled = false;
+      quizConfirmBtn.textContent = 'Submit Quiz';
+    }
+
+    function closeSubmitModal() {
+      quizSubmitModal.classList.remove('visible');
+    }
+
+    quizConfirmBtn.addEventListener('click', ()=> {
+      closeSubmitModal();
+      buildQuizSubmitFields();
+      sessionStorage.removeItem(storageKey);
+      quizConfirmBtn.disabled = true;
+      quizConfirmBtn.textContent = 'Submitting...';
+      submitForm.dataset.submitting = 'true';
+      if (typeof submitForm.requestSubmit === 'function') {
+        submitForm.requestSubmit();
+      } else {
+        submitForm.submit();
+      }
+    });
+
+    quizCancelBtn.addEventListener('click', ()=> closeSubmitModal());
+
+    quizSubmitModal.querySelector('.quiz-submit-backdrop').addEventListener('click', ()=> closeSubmitModal());
+
+    // Preview status button — shows a quick summary
+    const previewBtn = document.getElementById('preview-status');
+    if (previewBtn) {
+      previewBtn.addEventListener('click', ()=>{
+        const answered = state.filter(s=>s.answer).length;
+        const marked = state.filter(s=>s.marked).length;
+        const visited = state.filter(s=>s.visited).length;
+        alert(`Progress:\nAnswered: ${answered}/${total}\nMarked: ${marked}\nVisited: ${visited}/${total}`);
+      });
+    }
+
+    // Collapse palette for small screens
+    const collapseBtn = document.getElementById('collapse-palette');
+    const card = document.querySelector('.card.reveal');
+    if (collapseBtn && card) {
+      collapseBtn.addEventListener('click', ()=>{
+        if (card.style.gridTemplateColumns && card.style.gridTemplateColumns.startsWith('1fr')) {
+          // collapse to single column
+          card.style.gridTemplateColumns = '1fr';
+        } else {
+          card.style.gridTemplateColumns = '1fr 320px';
+        }
+      });
+    }
+
+    // persist progress on page unload
+    window.addEventListener('beforeunload', ()=>{
+      sessionStorage.setItem(storageKey, JSON.stringify(state));
+    });
+
+    // Replace the browser URL so the page does not remain on the POST-only
+    // endpoint (`/generate_quiz`). This prevents 405 responses on reloads.
+    try {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', '{{ url_for("generated_quiz") }}');
+      }
+    } catch (err) {
+      // ignore
+    }
+
+  </script>
+
+{% endblock %}
