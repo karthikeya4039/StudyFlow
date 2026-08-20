@@ -378,7 +378,7 @@
 .sticky-input-wrapper {
     position: fixed;
     left: 50%;
-    bottom: 18px;
+    bottom: 12px;
     transform: translateX(-50%);
     width: min(var(--chat-max-width), calc(100% - 32px));
     box-sizing: border-box;
@@ -578,6 +578,10 @@
     .chat-scroll-area { scrollbar-color: var(--muted) transparent; scrollbar-width: thin; }
 
    @media (max-width: 768px) {
+
+    .sticky-input-wrapper {
+    bottom: 24px;
+}
 
     .chat-scroll-area {
         flex: 1;
