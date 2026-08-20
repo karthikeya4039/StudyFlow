@@ -33,13 +33,14 @@
     <!-- Floating Pill Nav -->
     <div class="pill-nav-wrapper">
         <nav class="pill-nav">
-            <div class="nav-left">
-                <svg class="nav-logo-mark" viewBox="0 0 64 64" aria-hidden="true">
-                    <rect x="10" y="10" width="44" height="44" rx="10" fill="none" stroke="currentColor" stroke-width="2"></rect>
-                    <path d="M22 24h20M22 32h20M22 40h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-                </svg>
-                <span>StudyFlow</span>
-            </div>
+            <a href="/" class="nav-left" style="text-decoration: none; color: inherit;">
+    <svg class="nav-logo-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="10" y="10" width="44" height="44" rx="10" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <path d="M22 24h20M22 32h20M22 40h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <span>StudyFlow</span>
+</a>
+
             <div class="nav-center">
                 <a href="/" class="nav-link" data-nav>Home</a>
                 <a href="{{ url_for('chat', reset='true') }}" class="nav-link" data-nav>AI Chat</a>

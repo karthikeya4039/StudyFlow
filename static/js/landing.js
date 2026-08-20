@@ -20,14 +20,25 @@
         }
 
         // Keyframe stops: [scrollY (px), x (vw), y (vh), rotation (deg), scale, opacity]
-        const stops = [
-            [0,     62, 18,  -8, 1.0, 0.95],
-            [300,   58, 30, -12, 0.92, 0.9],
-            [700,   52, 42,  -4, 0.85, 0.85],
-            [1200,  68, 28,   6, 0.78, 0.7],
-            [1800,  72, 50,  10, 0.7,  0.4],
-            [2400,  76, 60,  14, 0.6,  0],
-        ];
+        const isMobile = window.innerWidth <= 600;
+
+const stops = isMobile
+    ? [
+        [0,     72, 24,  -6, 0.55, 0.75],
+        [300,   74, 34,  -8, 0.52, 0.65],
+        [700,   76, 44,  -3, 0.48, 0.55],
+        [1200,  78, 38,   5, 0.44, 0.4],
+        [1800,  80, 50,   8, 0.40, 0.2],
+        [2400,  82, 60,  10, 0.35, 0],
+      ]
+    : [
+        [0,     62, 18,  -8, 1.0, 0.95],
+        [300,   58, 30, -12, 0.92, 0.9],
+        [700,   52, 42,  -4, 0.85, 0.85],
+        [1200,  68, 28,   6, 0.78, 0.7],
+        [1800,  72, 50,  10, 0.7,  0.4],
+        [2400,  76, 60,  14, 0.6,  0],
+      ];
 
         function lerp(a, b, t) {
             return a + (b - a) * t;
@@ -64,8 +75,9 @@
             el.style.visibility = o <= 0 ? 'hidden' : 'visible';
         }
 
-        window.addEventListener('scroll', updateProduct, { passive: true });
-        updateProduct();
+       window.addEventListener('scroll', updateProduct, { passive: true });
+       window.addEventListener('resize', updateProduct);
+       updateProduct();
     }
 
     // ── Spread Wordmark Animation ────────────────────────

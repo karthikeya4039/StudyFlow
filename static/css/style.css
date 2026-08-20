@@ -564,7 +564,7 @@ a {
 .page-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 120px 24px 80px;
+    padding: 60px 24px 60px;
 }
 
 .card {
@@ -632,8 +632,15 @@ a {
 }
 
 .chat-history-timeline {
-    margin-top: 60px;
+    margin-top: 28px;
     border-top: 1px solid var(--hairline);
+}
+.chat-history-page {
+    padding-top: 80px;
+}
+
+.chat-history-page .chat-header {
+    margin-bottom: 0;
 }
 
 .chat-bubble {
@@ -1860,7 +1867,41 @@ a {
         visibility: visible;
     }
     .two-col { grid-template-columns: 1fr; }
-    .hero-copy { max-width: 100%; }
+    .hero-copy {
+    max-width: 100%;
+    width: 100%;
+    padding: 48px 24px 32px;
+    box-sizing: border-box;
+}
+
+.landing-hero {
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hero-headline {
+    font-size: clamp(36px, 10vw, 52px);
+    line-height: 1.08;
+}
+
+.hero-lede {
+    max-width: 100%;
+    width: 100%;
+}
+
+.hero-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.hero-specs {
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    padding: 20px 24px;
+}
 }
 
 @media (max-width: 600px) {
@@ -1875,6 +1916,32 @@ a {
     }
     .quiz-question-card {
         padding: 24px 20px;
+    }
+        .hero-copy {
+        padding: 40px 20px 28px;
+    }
+
+    .hero-headline {
+        font-size: clamp(34px, 11vw, 46px);
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero-buttons > * {
+        width: 100%;
+    }
+
+    .hero-specs {
+        padding: 18px 20px;
+        gap: 16px 24px;
+    }
+
+    .hero-spec {
+        flex: 1 1 120px;
+        min-width: 0;
     }
 }
 /* =========================================================
@@ -1981,4 +2048,196 @@ a {
         text-align: center;
     }
 
+}
+/* =========================================================
+   LANDING PAGE - MOBILE FIX
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .landing-hero {
+        min-height: auto;
+        padding-top: 58px;
+    }
+
+    .hero-copy {
+        max-width: 100%;
+        width: 100%;
+        padding: 48px 24px 32px;
+        box-sizing: border-box;
+    }
+
+    .hero-headline {
+        font-size: clamp(36px, 10vw, 52px);
+    }
+
+    .hero-lede {
+        max-width: 100%;
+    }
+
+    .hero-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .hero-specs {
+        width: 100%;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        padding: 20px 24px;
+        gap: 20px 32px;
+    }
+
+    .travelling-product {
+        width: 180px !important;
+        max-width: 180px !important;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .hero-copy {
+        padding: 36px 20px 28px;
+    }
+
+    .hero-headline {
+        font-size: clamp(34px, 11vw, 46px);
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero-buttons > * {
+        width: 100%;
+    }
+
+    .hero-specs {
+        padding: 18px 20px;
+        gap: 16px 24px;
+    }
+
+    .travelling-product {
+        width: 130px !important;
+        max-width: 130px !important;
+    }
+}
+
+/* =========================================================
+   CHAT HISTORY - DESKTOP SPACING FIX
+   ========================================================= */
+
+.chat-history-page {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.chat-history-page .chat-header {
+    margin-bottom: 24px;
+}
+
+.chat-history-page .chat-history-timeline {
+    margin-top: 24px;
+}
+
+.chat-empty-state {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.chat-empty-state svg {
+    display: block;
+    margin: 0 auto 24px !important;
+}
+/* =========================================================
+   NOTES - DESKTOP SPACING FIX
+   ========================================================= */
+
+.notes-page {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.notes-page > .card {
+    margin-bottom: 32px !important;
+}
+
+.notes-page .notes-grid {
+    margin-top: 24px;
+}
+
+.notes-empty-state {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.notes-empty-state svg {
+    display: block;
+    margin: 0 auto 24px !important;
+}
+/* =========================================================
+   DESKTOP PAGE SPACING FIX
+   ========================================================= */
+
+.chat-history-page {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.chat-history-page .chat-header {
+    margin-bottom: 24px;
+}
+
+.chat-history-page .chat-history-timeline {
+    margin-top: 24px;
+}
+
+.chat-empty-state {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.chat-empty-state svg {
+    display: block;
+    margin: 0 auto 24px !important;
+}
+
+
+.notes-page {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.notes-page > .card {
+    margin-bottom: 32px !important;
+}
+
+.notes-page .notes-grid {
+    margin-top: 24px;
+}
+
+.notes-empty-state {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.notes-empty-state svg {
+    display: block;
+    margin: 0 auto 24px !important;
+}
+/* Generated Quiz - Mobile Fix */
+@media (max-width: 768px) {
+    .page-container > .card.reveal {
+        margin-top: 82px !important;
+    }
+}
+@media (max-width: 768px) {
+    .quiz-page {
+        padding-top: 82px !important;
+    }
 }

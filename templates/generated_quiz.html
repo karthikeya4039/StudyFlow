@@ -1,6 +1,99 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
+<style>
+    /* Mobile quiz layout */
+    @media (max-width: 768px) {
+
+        .page-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 82px 8px 0 !important;
+}
+
+        .page-container > .card.reveal {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 10px auto !important;
+            gap: 0 !important;
+            box-sizing: border-box;
+        }
+
+        .page-container > .card.reveal > section {
+            padding: 12px !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .page-container > .card.reveal > aside {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 16px 12px !important;
+            border-left: none !important;
+            border-top: 1px solid var(--hairline);
+        }
+
+        #question-container {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px !important;
+            min-height: 0 !important;
+        }
+
+        .question-item {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .question-item h3 {
+            font-size: 17px !important;
+            line-height: 1.5;
+            overflow-wrap: break-word;
+        }
+
+        .option-row {
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
+        }
+
+        .option-text {
+            min-width: 0;
+            overflow-wrap: break-word;
+            word-break: normal;
+        }
+
+        .quiz-control-row {
+            width: 100%;
+            box-sizing: border-box;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        #palette {
+            grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .palette-btn {
+            min-width: 0;
+            padding: 8px 4px !important;
+        }
+
+        #submit-form {
+            width: 100%;
+        }
+
+        #submit-btn {
+            width: 100% !important;
+        }
+    }
+</style>
+
 <main class="page-container">
 
   <div class="card reveal" style="max-width:1100px; margin:16px auto; display:grid; grid-template-columns: 1fr 320px; gap:20px;">

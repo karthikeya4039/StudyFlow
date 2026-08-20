@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<main class="page-container" style="max-width:900px;">
+<main class="page-container chat-history-page">
 
     <div class="chat-workspace">
 
@@ -21,7 +21,7 @@
         {% if chats %}
         <div class="chat-history-timeline reveal">
             {% for chat in chats %}
-            <div style="padding: 40px 0; border-bottom: 1px solid var(--hairline);">
+            <div style="padding: 28px 0; border-bottom: 1px solid var(--hairline);">
 
                 <div style="margin-bottom: 16px;">
                     <span style="font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted);">
@@ -29,14 +29,14 @@
                     </span>
                 </div>
 
-                <div style="display:grid; grid-template-columns:40px 1fr; gap:24px; margin-bottom:24px;">
+                <div style="display:grid; grid-template-columns:40px 1fr; gap:16px; margin-bottom:20px;">
                     <div style="font-size:24px; opacity:.8;">👤</div>
                     <div style="font-family:var(--mono); font-size:12px; line-height:1.9; color:var(--ink-sec);">
                         {{ chat[0] | e }}
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:40px 1fr; gap:24px;">
+                <div style="display:grid; grid-template-columns:40px 1fr; gap:16px;">
                     <div style="font-size:24px; opacity:.8;">🤖</div>
                     <div class="chat-history-ai-content" style="font-family:var(--serif); font-size:15px; line-height:1.9; color:var(--ink);"
                          data-raw="{{ chat[1] | e }}">
@@ -48,7 +48,7 @@
         </div>
         {% else %}
 
-        <div class="reveal" style="text-align:center; padding:100px 0;">
+        <div class="reveal chat-empty-state" style="text-align:center; padding:40px 0;">
             <svg viewBox="0 0 100 100" style="width:80px; height:80px; margin-bottom:24px; opacity:0.6;">
                 <circle cx="50" cy="50" r="40" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 4" />
                 <path d="M40 40 L60 60 M60 40 L40 60" stroke="var(--ink)" stroke-width="1.5" />

@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<main class="page-container">
+<main class="page-container notes-page">
 
-    <div class="card reveal" style="margin-bottom: 60px;">
+    <div class="card reveal" style="margin-bottom: 32px;">
         <h3 class="serif-heading" style="font-size: 24px; margin-bottom: 24px;">Create <em>New Note</em></h3>
 
         <form action="/notes" method="POST">
@@ -24,7 +24,7 @@
         </form>
     </div>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;" class="reveal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;" class="reveal">
         <h2 class="serif-heading" style="font-size:32px;">Your <em>Notes</em></h2>
     </div>
 
@@ -57,7 +57,7 @@
     </div>
     {% else %}
     
-    <div class="reveal" style="text-align:center; padding:100px 0;">
+    <div class="reveal notes-empty-state" style="text-align:center; padding:40px 0;">
         <svg viewBox="0 0 100 100" style="width:80px; height:80px; margin-bottom:24px; opacity:0.6;">
             <rect x="20" y="10" width="60" height="80" fill="none" stroke="var(--ink)" stroke-width="1.5" />
             <line x1="35" y1="30" x2="65" y2="30" stroke="var(--ink)" stroke-width="1.5" />

@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Optional, Dict, cast, Sequence
 
 import ollama
+from ollama import Client
 import requests
 from docx import Document as DocxDocument
 from dotenv import load_dotenv
@@ -24,14 +25,26 @@ from xml.sax.saxutils import escape
 
 from database import get_db_connection, initialize_database
 
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "database" / "study.db"
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY") or os.urandom(24).hex()
 AI_MAX_RETRIES = int(os.getenv("AI_MAX_RETRIES", "3"))
+
+if OLLAMA_API_KEY:
+    ollama_client = Client(
+        host="https://ollama.com",
+        headers={"Authorization": f"Bearer {OLLAMA_API_KEY}"}
+    )
+else:
+    ollama_client = Client(
+        host=OLLAMA_URL
+    )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("study_assistant")
@@ -172,6 +185,9 @@ def clean_and_fix_json(json_str: str) -> str:
 
 
 def ollama_health_check() -> bool:
+    if OLLAMA_API_KEY:
+        return True
+
     try:
         response = requests.get(f"{OLLAMA_URL}/api/tags", timeout=3)
         return response.status_code == 200
@@ -190,7 +206,11 @@ def call_ollama(prompt: str, system_prompt: Optional[str] = None, retries: int =
             if system_prompt:
                 messages.insert(0, {"role": "system", "content": system_prompt})
 
-            response = ollama.chat(model=OLLAMA_MODEL, messages=messages, options={"num_predict": 2048})
+                response = ollama_client.chat(
+                    model=OLLAMA_MODEL,
+                    messages=messages,
+                    options={"num_predict": 2048}
+                    )
             # Response shape can vary depending on ollama client version: try several fallbacks
             content = None
             try:
