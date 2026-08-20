@@ -29,8 +29,8 @@
     .chat-workspace {
     display: flex;
     flex-direction: column;
-    height: auto;
-    min-height: calc(100dvh - 58px);
+    height: calc(100dvh - 58px);
+    min-height: 0;
     padding-top: 0;
     box-sizing: border-box;
     width: 100%;
@@ -39,7 +39,7 @@
 }
 
 .chat-scroll-area {
-    padding: 16px 16px 120px;
+    padding: 80px 16px 140px;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -378,7 +378,7 @@
 .sticky-input-wrapper {
     position: fixed;
     left: 50%;
-    bottom: 0;
+    bottom: 12px;
     transform: translateX(-50%);
     width: min(var(--chat-max-width), calc(100% - 32px));
     box-sizing: border-box;
@@ -584,7 +584,7 @@
         min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
-        padding: 16px 16px 120px;
+        padding: 80px 16px 140px;
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
     }
@@ -605,16 +605,6 @@
         font-size: 16px;
     }
 
-
-.chat-scroll-area {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 16px 16px 120px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
 
 .chat-centered-column {
     width: 100%;
